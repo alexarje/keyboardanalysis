@@ -149,9 +149,12 @@ The captured data includes:
 - Timestamps for each keystroke
 
 Make sure to:
-- Secure the output files appropriately
+- Secure the output files appropriately (files are created with 0600 permissions by default)
 - Only use on systems you own or have permission to monitor
 - Comply with privacy laws and workplace policies
+- Regularly review and clean up old log files
+
+**Security Note**: KeyMeter automatically creates capture files with restrictive permissions (mode 0600, readable/writable only by the owner). The output directory is also set with 0700 permissions during installation to prevent unauthorized access.
 
 ## Troubleshooting
 

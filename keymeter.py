@@ -63,8 +63,14 @@ class KeyMeter:
         filename = f"keystrokes_{timestamp}.txt"
         self.current_file = self.output_dir / filename
         
-        # Open file in append mode
-        self.capture_file = open(self.current_file, 'a')
+        # Open file in append mode with restrictive permissions (0600)
+        # Create file with secure permissions if it doesn't exist
+        fd = os.open(
+            self.current_file, 
+            os.O_WRONLY | os.O_CREAT | os.O_APPEND,
+            0o600
+        )
+        self.capture_file = os.fdopen(fd, 'a')
         self.capture_file.write(f"# KeyMeter capture started at {datetime.now().isoformat()}\n")
         self.capture_file.flush()
         
@@ -124,7 +130,7 @@ class KeyMeter:
         if self.listener:
             self.listener.stop()
         
-        if self.capture_file:
+        if self.capture_file and not self.capture_file.closed:
             self.capture_file.write(f"# KeyMeter capture stopped at {datetime.now().isoformat()}\n")
             self.capture_file.close()
         
@@ -169,7 +175,8 @@ def main():
     def signal_handler(signum, frame):
         keymeter.logger.info(f"Received signal {signum}, shutting down...")
         keymeter.stop()
-        sys.exit(0)
+        if not args.daemon:
+            sys.exit(0)
     
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)

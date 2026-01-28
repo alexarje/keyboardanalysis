@@ -42,12 +42,13 @@ sudo cp requirements.txt $INSTALL_DIR/
 
 # Install Python dependencies
 echo "Installing Python dependencies..."
-sudo pip3 install -r requirements.txt
+pip3 install --user -r requirements.txt
 
 # Create output directory for current user
 OUTPUT_DIR="$HOME/keymeter_logs"
 mkdir -p $OUTPUT_DIR
-echo "Created output directory: $OUTPUT_DIR"
+chmod 700 $OUTPUT_DIR
+echo "Created output directory with secure permissions: $OUTPUT_DIR"
 
 # Install systemd service
 echo "Installing systemd service..."
